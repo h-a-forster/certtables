@@ -9,8 +9,9 @@ Columns of ``data/certtables-v1.csv``:
 - ``method``, ``prec_bits``: how it was computed (Arb working precision, 0 for exact);
 - ``lo``, ``hi``: decimal strings, rounded outward to :data:`DIGITS` significant digits, so
   the true value lies in ``[lo, hi]``;
-- ``f64``: the correctly rounded binary64 value when ``lo`` and ``hi`` round to the same
-  double (else empty);
+- ``f64``: the correctly rounded binary64 value when both ends of the enclosure, before the
+  decimal rounding of ``lo`` and ``hi``, round to the same double (else empty); ``inf`` or
+  ``-inf`` beyond the double range;
 - ``exact_sha``: for ``exact`` rows, SHA-256 (first 16 hex) of ``numerator/denominator``;
 - ``sha``: SHA-256 (first 16 hex) of ``id|kind|method|prec_bits|lo|hi``.
 """
@@ -213,6 +214,7 @@ def build(
         return parts[family]
 
     gst_done: set[tuple] = set()
+    gst_failed: dict[tuple, Exception] = {}  # every look of a failed design is an error
     last_report = time.monotonic()
     for i, pt in enumerate(points):
         pf = part(pt.family)
@@ -227,20 +229,25 @@ def build(
             if pt.family == "gst":
                 d = design_of(pt)
                 key = (d.kind, d.alpha, d.t)
+                if key in gst_failed:
+                    raise gst_failed[key]
                 if key in gst_done:
                     continue
                 gst_done.add(key)
                 t0 = time.monotonic()
-                encs = enclose_gst(d)
                 sched = pt.p["t"]
-                for look, enc in enumerate(encs, start=1):
-                    gp = Point(
-                        "gst",
-                        "bound",
-                        (("design", d.kind), ("alpha", d.alpha), ("t", sched), ("look", look)),
-                    )
-                    if gp.id in seen and gp.id not in pf.done:
-                        pf.append(make_row(gp, enc))
+                design = (("design", d.kind), ("alpha", d.alpha), ("t", sched))
+                try:  # all rows before any append, so a design is never left half written
+                    rows = [
+                        make_row(Point("gst", "bound", (*design, ("look", look))), enc)
+                        for look, enc in enumerate(enclose_gst(d), start=1)
+                    ]
+                except Exception as exc:
+                    gst_failed[key] = exc
+                    raise
+                for row in rows:
+                    if row.id in seen and row.id not in pf.done:
+                        pf.append(row)
                         counts["computed"] += 1
                 plog(f"gst {d.kind} alpha={d.alpha} t={sched}: {time.monotonic() - t0:.1f}s")
             else:

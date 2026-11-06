@@ -139,7 +139,7 @@ def write_report(targets_dir: Path, out_dir: Path, manifest_path: Path) -> list[
     versions = {}
     tables = {}
     for name in ("grid", "random"):
-        path = Path("data") / f"certtables-v1{'' if name == 'grid' else '-random'}.csv"
+        path = manifest_path.parent / f"certtables-v1{'' if name == 'grid' else '-random'}.csv"
         if path.exists():
             tables[name] = {r.id: r for r in read_rows(path)}
     for t in targets:

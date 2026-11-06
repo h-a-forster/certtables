@@ -7,6 +7,7 @@ import contextlib
 import json
 import platform
 import sys
+import time
 from pathlib import Path
 
 from certtables import __version__
@@ -45,6 +46,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     which = ["grid", "random"] if args.set == "all" else [args.set]
     updates: dict[str, dict] = {}
     status = 0
+    start = time.monotonic()
     for name in which:
         points = _points(name)
         if args.families:
@@ -54,7 +56,10 @@ def cmd_build(args: argparse.Namespace) -> int:
                 raise SystemExit(f"unknown families: {sorted(unknown)}")
             points = [p for p in points if p.family in keep]
         out = sets[name] if not args.families else Path(args.out_dir) / f"{name}.csv"
-        counts = build(points, out, WORK / name, max_minutes=args.max_minutes)
+        left = args.max_minutes  # one budget for the whole call, not one per set
+        if left is not None:
+            left -= (time.monotonic() - start) / 60
+        counts = build(points, out, WORK / name, max_minutes=left)
         print(json.dumps({name: counts}))
         if counts["stopped"]:
             status = 3
@@ -97,7 +102,8 @@ def _points(name: str) -> list:
 
 
 def cmd_verify(args: argparse.Namespace) -> int:
-    """Check row hashes, ordering and the manifest's file and grid hashes."""
+    """Check row hashes, ordering, the manifest's file and grid hashes, and that every declared
+    point has a row or a not_enclosed entry."""
     from certtables.grid import grid_hash
     from certtables.table import check_row, file_sha256, read_rows
 
@@ -105,15 +111,23 @@ def cmd_verify(args: argparse.Namespace) -> int:
     bad = 0
     for name in ("grid", "random"):
         if name not in manifest:
+            print(f"MANIFEST.json has no {name!r} entry")
+            bad += 1
             continue
-        path = DATA / manifest[name]["file"]
-        if file_sha256(path) != manifest[name]["sha256"]:
+        entry = manifest[name]
+        path = DATA / entry["file"]
+        if file_sha256(path) != entry["sha256"]:
             print(f"{path.name}: file sha256 differs from MANIFEST.json")
             bad += 1
-        if grid_hash(_points(name)) != manifest[name]["grid_hash"]:
+        points = _points(name)
+        if grid_hash(points) != entry["grid_hash"]:
             print(f"{path.name}: the declared points differ from MANIFEST.json")
             bad += 1
         rows = read_rows(path)
+        covered = [r.id for r in rows] + list(entry["not_enclosed"])
+        if sorted(covered) != sorted(p.id for p in points):
+            print(f"{path.name}: rows and not_enclosed do not partition the declared points")
+            bad += 1
         for r in rows:
             try:
                 check_row(r)
@@ -126,8 +140,12 @@ def cmd_verify(args: argparse.Namespace) -> int:
 
 def cmd_check(args: argparse.Namespace) -> int:
     from certtables.study import check_target
+    from certtables.targets import get_target
 
-    for target in args.target.split(","):
+    names = args.target.split(",")
+    for target in names:
+        get_target(target)  # refuse a bad name before any target has been scored
+    for target in names:
         summary = check_target(target, GRID_CSV, RANDOM_CSV, RESULTS / "targets")
         print(json.dumps(summary))
     return 0
@@ -183,6 +201,8 @@ def cmd_env(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from certtables.targets import TARGETS
+
     ap = argparse.ArgumentParser(prog="certtables", description=__doc__)
     ap.add_argument("--version", action="version", version=f"certtables {__version__}")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -198,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument(
         "--target",
         required=True,
-        help="target name(s), comma-separated (see `certtables check --target list`)",
+        help=f"comma-separated, from: {', '.join(sorted(TARGETS))}",
     )
     c.set_defaults(func=cmd_check)
     r = sub.add_parser("report", help="write the census tables under results/")
@@ -212,6 +232,8 @@ def main(argv: list[str] | None = None) -> int:
     e = sub.add_parser("env", help="print package versions")
     e.set_defaults(func=cmd_env)
     args = ap.parse_args(argv)
+    if args.cmd in ("check", "report", "verify", "repro") and not DATA.is_dir():
+        raise SystemExit(f"no {DATA}/ here: run certtables from the repository root")
     return args.func(args)
 
 

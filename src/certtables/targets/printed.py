@@ -1,7 +1,8 @@
 """Printed constants: Pocock C_P(K, alpha) and O'Brien-Fleming C_B(K, alpha) for two-sided
 tests with K equally spaced looks, as tabulated in Jennison and Turnbull (2000), *Group
-Sequential Methods with Applications to Clinical Trials*, Table 2.1 (alpha = 0.05 and
-0.01, K = 1..5; three decimals). The values were transcribed for this release and not
+Sequential Methods with Applications to Clinical Trials*, Tables 2.1 (C_P) and 2.3 (C_B)
+(alpha = 0.05 and 0.01, K = 1..5; three decimals). K = 1 has no design on the grid, so its
+constants are transcribed but not scored. The values were transcribed for this release and not
 re-read against a physical copy; a disagreement is reported as a transcription or table
 discrepancy, not as an error in the book.
 
@@ -27,7 +28,7 @@ _EQUAL = {"1/2,1": 2, "1/3,2/3,1": 3, "1/4,1/2,3/4,1": 4, "1/5,2/5,3/5,4/5,1": 5
 
 class PrintedTarget(Target):
     name = "printed"
-    description = "Jennison & Turnbull (2000) Table 2.1: Pocock C_P and O'Brien-Fleming C_B"
+    description = "Jennison & Turnbull (2000) Tables 2.1, 2.3: Pocock C_P, O'Brien-Fleming C_B"
 
     def supports(self, pt: Point) -> bool:
         if pt.family != "gst":

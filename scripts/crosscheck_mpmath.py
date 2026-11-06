@@ -1,8 +1,9 @@
 """Independent check of table rows with mpmath at 80 digits (evidence, not a proof).
 
-Arb proves a value of the formula it is given; this checks the formulas against a separate
-implementation. It covers every certified row some target scored as wrong, plus a seeded
-sample of the other continuous rows. A CDF or SF row passes when mpmath's value lies in the
+Arb proves a value of the formula it is given; this checks those values against a separate
+implementation of the same beta and gamma identities, so a wrong identity would pass. It
+covers every certified row some target scored as wrong, plus a seeded sample of the other
+continuous rows. A CDF or SF row passes when mpmath's value lies in the
 enclosure widened by 1e-40 relative; a quantile row passes when mpmath's CDF - p (or SF - p)
 changes sign across the enclosure, each end widened by 1e-15 of the enclosure's own width
 plus 1e-30 relative (an exact root must give |CDF - p| below 1e-60). Points run in a worker

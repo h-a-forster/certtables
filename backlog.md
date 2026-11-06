@@ -6,6 +6,7 @@
 
 - Decide whether to file the drafts in docs/upstream/ (SciPy f.isf, the two new t-quantile modes on scipy#25968, f.ppf, spotify-confidence); nothing is filed.
 - Decide whether the repository stays private or goes public.
+- Spend Actions minutes on a first CI run: it has never executed, so the Linux replay of the recorded adapters and Arb rows is untested.
 
 ## Decided
 

@@ -28,8 +28,9 @@ tables. Commands are at the end. Method and proofs: [docs/DESIGN.md](docs/DESIGN
   (scipy#25968) calls the same kind of value fine. At small df the result sticks near 1e154.
 - **statsmodels 0.15.0**: 0 wrong of 1,114 grid and 2,000 random points. **JAX 0.12.0.1**: 0
   wrong on the normal, 1.2% (0.6 to 2.1) on chi-square, all with at least 9.59 digits right. **spotify-confidence
-  4.1.0**: boundaries about 1e-5 low after the first look, harmless in practice. **All 36
-  printed Jennison and Turnbull constants** checked agree to three decimals.
+  4.1.0**: boundaries about 1e-5 low after the first look, harmless in practice. **All 16
+  printed Jennison and Turnbull constants** checked (K = 2 to 5) agree to three decimals at
+  the 36 looks compared.
 
 ## What was measured
 
@@ -135,7 +136,8 @@ reproductions are in [docs/upstream/](docs/upstream/); none has been filed.
 - **Marginal.** The three chi-square points have LRE 11.25 to 11.97 and one Kolmogorov-Smirnov
   survival point 11.09, just under the 12-digit tolerance. The two Kolmogorov-Smirnov CDF
   points return 0 at `d` one rounding above `1/(2n)`, where the exact values are 2e-83 and
-  1e-166.
+  1e-166. They count as wrong only because inputs are exact doubles: at `1/(2n)` itself the
+  value is exactly 0, which is what SciPy returns, so they are not SciPy defects.
 
 Other targets: JAX's 23 chi-square points have LRE from 9.59, at large df; spotify-confidence's
 13 later-look boundaries are low by 6e-6 to 2.8e-5 relative, consistent with its fixed-step
@@ -153,12 +155,13 @@ use of Arb. The checks:
 - **Agreement.** SciPy, which shares no code with Arb, is within 1e-12 of the enclosure on
   15,406 of 16,076 scored rows. A formula error would show up as a block of disagreements; the
   670 that remain have the causes above.
-- **Independent check of the disagreements.** mpmath at 80 digits, a separate implementation,
-  tested the 1,016 continuous rows behind a wrong verdict for any target and a seeded sample
-  of 600 others (`results/crosscheck.json`). 963 and 584 passed and none failed; 67 ran past
-  the 10-second limit (51 of them `f.isf` rows) and 2 raised `NoConvergence`, so those stand
-  on Arb alone.
-- **Printed tables.** All 36 Jennison and Turnbull constants agree to three decimals.
+- **Independent check of the disagreements.** mpmath at 80 digits, a separate implementation
+  of the same beta and gamma identities, tested the 1,016 continuous rows behind a wrong
+  verdict for any target and a seeded sample of 600 others (`results/crosscheck.json`). 963 and
+  584 passed and none failed; 67 ran past the 10-second limit (52 of them `f.isf` rows) and 2
+  raised `NoConvergence`, so those stand on Arb alone. This catches a wrong use of Arb, not a
+  wrong identity; the identities rest on the closed forms and the agreement above.
+- **Printed tables.** All 16 Jennison and Turnbull constants checked agree to three decimals.
 - **K = 3 against the uncertified recursion.** A slow test checks that the mpmath recursion
   behind the K = 4, 5 references lands on the certified K = 3 value to 1e-14.
 

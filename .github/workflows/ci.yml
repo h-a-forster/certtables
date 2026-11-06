@@ -38,11 +38,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # The SciPy adapter replay needs the recorded SciPy, which the lock gives on 3.12+ only;
+        # Windows keeps the 3.11 floor covered. On 3.11 that replay skips, and -rs says so.
         include:
           - os: ubuntu-latest
-            python: "3.11"
-          - os: windows-latest
             python: "3.13"
+          - os: windows-latest
+            python: "3.11"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -54,7 +56,7 @@ jobs:
         run: uv sync --locked --group dev
 
       - name: Test (fast subset)
-        run: uv run pytest
+        run: uv run pytest -rs
 
       - name: Table integrity
         run: uv run certtables verify

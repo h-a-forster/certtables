@@ -18,7 +18,8 @@ Python 3.11+, depends on python-flint (Arb) and mpmath. No model calls, no netwo
 
 From [REPORT.md](REPORT.md), with SciPy 1.18.1, statsmodels 0.15.0, JAX 0.12.0.1 and
 spotify-confidence 4.1.0. "Wrong" means certified: the value lies outside the enclosure by
-more than a relative 1e-12 (1e-6 for spotify-confidence).
+more than a relative 1e-12 (1e-6 for spotify-confidence), with an absolute floor of `DBL_MIN`
+for probabilities, so returning 0 for a true value below 2.2e-308 is not wrong.
 
 | Target | Family | Grid: wrong / scored | Random draws: failure rate (95% CI) |
 |---|---|---|---|
@@ -34,6 +35,10 @@ more than a relative 1e-12 (1e-6 for spotify-confidence).
 | JAX | chi-square | 11 / 612 | 1.23% (0.63 to 2.14) |
 | spotify-confidence | certified boundaries | 6 / 11 | not drawn |
 
+Two of the three Kolmogorov-Smirnov points come from the exact-double convention, not a defect.
+For example, the double 0.1 is one rounding above 1/10, which turns an exact 0 into 2e-83;
+SciPy's 0 is right for the 1/10 a caller means.
+
 - **The stack is right where most people use it.** SciPy's normal functions, exact tests and
   Clopper-Pearson bounds, and statsmodels, had no certified failure. Nothing was undecided.
 - **`scipy.stats.f.isf` is the main defect.** It is `ppf(1 - q)`, so it returns `inf` below
@@ -43,8 +48,9 @@ more than a relative 1e-12 (1e-6 for spotify-confidence).
   (scipy#25968), SciPy returns finite values off by a factor of 1.6 to 2.8 for df between
   about 2 and 4.5 (for example `t.ppf(1e-200, 3)`, half the true value), and values stuck near
   1e154 at small df. These two modes appear unreported.
-- **Printed constants hold up.** All 36 Jennison and Turnbull Table 2.1 values checked agree
-  to their three decimals (14 against certified rows, 22 against references).
+- **Printed constants hold up.** The 16 Jennison and Turnbull `C_P` and `C_B` constants checked
+  (K = 2 to 5) agree to their three decimals at all 36 looks compared (14 against certified
+  rows, 22 against references).
 
 These are rates under a stated log-uniform measure that reaches far into the tails, not
 rates in "typical use". Drafts for maintainers are in [docs/upstream/](docs/upstream/);
@@ -82,12 +88,16 @@ for r in rows:
     p = float(r["id"].split("p=")[1].rstrip(")"))
     v = stats.norm.isf(p)
     lo, hi = Fraction(r["lo"]), Fraction(r["hi"])
-    print(r["id"], v, "inside" if lo <= Fraction(v) <= hi else float(Fraction(v) / lo - 1))
+    inside = lo <= Fraction(v) <= hi
+    print(r["id"], v, "inside" if inside else f"off by {float(Fraction(v) / lo - 1):.1e}")
 ```
 
-The `f64` column gives the correctly rounded double when `lo` and `hi` round to the same one.
-To score a Python library with the full census, add a target
-([CONTRIBUTING.md](CONTRIBUTING.md)).
+These enclosures are about 1e-20 wide, so a correctly rounded double usually lies just outside:
+judge "off by" against your tolerance (the census uses 1e-12), not against "inside".
+
+The `f64` column gives the correctly rounded double when both ends of the enclosure round to
+the same one, and `inf` or `-inf` for the few values beyond the double range. To score a Python
+library with the full census, add a target ([CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## Install and run
 
@@ -95,12 +105,14 @@ To score a Python library with the full census, add a target
 git clone https://github.com/h-a-forster/certtables
 cd certtables
 uv sync --group dev --extra spotify      # add --extra jax for that target
-uv run certtables verify                 # row hashes, file hashes, grid hash
+uv run certtables verify                 # row, file and grid hashes, every point accounted for
 uv run certtables check --target scipy   # also statsmodels, mpmath, spotify, jax, printed
 uv run certtables report                 # results/census*.csv, results/census.md, wrong.csv
 uv run certtables repro 'f.isf(dfn=10.0;dfd=10.0;p=1e-20)' --target scipy
 uv run certtables build --max-minutes 12 # rebuild; rerun to resume, about 30 minutes in all
 ```
+
+Run these from the repository root: the tables live in the repository, not in the wheel.
 
 ## Documentation
 

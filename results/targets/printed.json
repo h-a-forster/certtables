@@ -1,18 +1,18 @@
 {
   "target": "printed",
   "version": "",
-  "description": "Jennison & Turnbull (2000) Table 2.1: Pocock C_P and O'Brien-Fleming C_B",
+  "description": "Jennison & Turnbull (2000) Tables 2.1, 2.3: Pocock C_P, O'Brien-Fleming C_B",
   "grid": {
     "rows": 36,
     "verdicts": {
       "correct": 14,
       "ref-agree": 22
     },
-    "seconds": 0.2
+    "seconds": 0.1
   },
   "random": {
     "rows": 0,
     "verdicts": {},
-    "seconds": 0.3
+    "seconds": 0.2
   }
 }

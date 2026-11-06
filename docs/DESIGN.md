@@ -202,9 +202,11 @@ The failure rate is therefore a rate under this measure, not over "typical use".
 (columns in `table.py`), checkpointing per family under `runs/build/<set>/` (rows appended
 and fsynced as they finish, finished ids skipped on rerun, a torn last line dropped,
 `progress.log`, `errors.jsonl`), with `--max-minutes` to stop and resume. Points whose
-enclosure fails are recorded in `MANIFEST.json` and left out. `certtables verify` checks
-every row hash, the file hashes and that the declared points still hash to the manifest's
-grid hash.
+enclosure fails are recorded in `MANIFEST.json` and left out; a group-sequential design that
+fails records every one of its looks. `--max-minutes` is one budget for the whole call.
+`certtables verify` checks every row hash, the file hashes, that the declared points still
+hash to the manifest's grid hash, and that each declared point has exactly one row or
+`not_enclosed` entry.
 
 ## 4. Scoring
 
@@ -258,8 +260,9 @@ are grouped in `docs/upstream/`, one draft per cause, with numbers from
 not filed.
 
 `scripts/crosscheck_mpmath.py` tests the rows behind those verdicts, and a seeded sample of
-the others, against mpmath at 80 digits. That is evidence about the formulas, which Arb cannot
-check, not a proof.
+the others, against mpmath at 80 digits. That is evidence, not a proof, and only about how Arb
+is used: for t and F, mpmath evaluates the same beta identities. The identities themselves
+rest on the closed-form tests and on agreement with targets.
 
 ## 5. Out of scope
 

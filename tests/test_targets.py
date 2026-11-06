@@ -33,7 +33,9 @@ def test_recorded_outputs_replay(name):
     for pid, value in rec["values"].items():
         pt = parse_id(pid)
         assert target.supports(pt)
-        assert repr(target.evaluate(pt)) == value, pid
+        got, want = target.evaluate(pt), float(value)
+        # Libm differs in the last bit across platforms; a few ulps still catches any real change.
+        assert got == want or abs(got - want) <= 4 * math.ulp(want), (pid, repr(got), value)
 
 
 @pytest.mark.parametrize(("n", "w"), [(5, 0), (5, 7), (10, 13), (10, 55), (12, 40)])

@@ -1,0 +1,23 @@
+{
+  "target": "mpmath",
+  "version": "1.4.1",
+  "description": "mpmath at mp.dps = 15: ncdf, gammainc and betainc (regularized)",
+  "grid": {
+    "rows": 2142,
+    "verdicts": {
+      "correct": 2035,
+      "error": 39,
+      "wrong": 68
+    },
+    "seconds": 141.4
+  },
+  "random": {
+    "rows": 3975,
+    "verdicts": {
+      "correct": 3634,
+      "error": 81,
+      "wrong": 260
+    },
+    "seconds": 309.2
+  }
+}

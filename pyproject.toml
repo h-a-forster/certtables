@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "certtables"
+version = "0.1.0"
+description = "Interval-certified (Arb) reference values for statistical quantiles, tail p-values, exact-test null distributions and group-sequential boundaries, and a digits-correct census of the Python stats stack against them."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "certtables contributors" }]
+keywords = [
+    "numerical-accuracy", "interval-arithmetic", "arb", "ball-arithmetic", "statistical-software",
+    "quantiles", "p-values", "exact-tests", "group-sequential", "validation",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Software Development :: Testing",
+]
+# Enclosures need python-flint (Arb, FLINT) only; mpmath gives the uncertified K = 4, 5
+# group-sequential references.
+dependencies = ["python-flint==0.8.0", "mpmath>=1.3"]
+
+[project.optional-dependencies]
+# Implementations under test. Each adapter imports its target lazily.
+targets = ["scipy>=1.13", "statsmodels>=0.14.2", "numpy>=1.26"]
+# chartify 5.0.1 (a spotify-confidence dependency) fails to import with bokeh 3.10.
+spotify = ["spotify-confidence==4.1.0", "bokeh<3.10"]
+jax = ["jax[cpu]>=0.4.30"]
+
+[project.urls]
+Homepage = "https://github.com/h-a-forster/certtables"
+Documentation = "https://github.com/h-a-forster/certtables/tree/main/docs"
+Issues = "https://github.com/h-a-forster/certtables/issues"
+"Release notes" = "https://github.com/h-a-forster/certtables/blob/main/docs/release-notes-0.1.0.md"
+
+[project.scripts]
+certtables = "certtables.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "scipy>=1.13",
+    "statsmodels>=0.14.2",
+    "numpy>=1.26",
+]
+
+[tool.uv]
+# Lock only releases at least two weeks old; move this date deliberately.
+exclude-newer = "2026-10-23T00:00:00Z"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/certtables"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/certtables", "tests", "docs", "scripts", "data", "results", "uv.lock",
+    "README.md", "REPORT.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", "CITATION.cff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["slow: full rebuilds and long enclosures (run with --runslow)"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["tmp", "runs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]

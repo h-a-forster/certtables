@@ -1,0 +1,21 @@
+{
+  "target": "jax",
+  "version": "0.12.0.1",
+  "description": "jax.scipy.stats norm.cdf/sf/ppf/isf, chi2.cdf/sf (x64 enabled, CPU)",
+  "grid": {
+    "rows": 710,
+    "verdicts": {
+      "correct": 699,
+      "wrong": 11
+    },
+    "seconds": 14.7
+  },
+  "random": {
+    "rows": 2979,
+    "verdicts": {
+      "correct": 2967,
+      "wrong": 12
+    },
+    "seconds": 52.4
+  }
+}

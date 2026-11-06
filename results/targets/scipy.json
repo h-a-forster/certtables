@@ -1,0 +1,22 @@
+{
+  "target": "scipy",
+  "version": "1.18.1",
+  "description": "scipy.stats distributions, binomtest CI, fisher_exact, wilcoxon, mannwhitneyu, kstwo",
+  "grid": {
+    "rows": 6365,
+    "verdicts": {
+      "correct": 6198,
+      "wrong": 167
+    },
+    "seconds": 39.7
+  },
+  "random": {
+    "rows": 9722,
+    "verdicts": {
+      "correct": 9208,
+      "out-of-range": 11,
+      "wrong": 503
+    },
+    "seconds": 36.3
+  }
+}

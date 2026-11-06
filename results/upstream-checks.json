@@ -1,0 +1,41 @@
+{
+  "scipy": "1.18.1",
+  "f_isf": {
+    "scored": 778,
+    "wrong": 551,
+    "equal_to_ppf_of_1_minus_q": 778,
+    "largest_wrong_q": 1e-05,
+    "values": {
+      "inf": 490,
+      "ok": 61
+    },
+    "candidate_fixes": 533,
+    "candidate_still_wrong": 18,
+    "candidate_nan": 16,
+    "candidate_breaks_correct_rows": 0
+  },
+  "t_quantile": {
+    "kinds": {
+      "finite, stuck near sqrt(df / DBL_MIN)": 47,
+      "infinite, wrong sign": 29,
+      "finite, off by a factor below 3": 15
+    },
+    "largest_p_by_kind": {
+      "finite, stuck near sqrt(df / DBL_MIN)": 1e-20,
+      "infinite, wrong sign": 2.03609e-230,
+      "finite, off by a factor below 3": 1.14091e-142
+    },
+    "factor_range": [
+      1.5908855863173743,
+      2.8037938922419614
+    ]
+  },
+  "other_wrong": {
+    "chi2.ppf/ok": 1,
+    "chi2.sf/ok": 2,
+    "f.ppf/nan": 18,
+    "f.ppf/ok": 4,
+    "ks.cdf/ok": 2,
+    "ks.sf/ok": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "target": "spotify",
+  "version": "4.1.0",
+  "description": "spotify-confidence sequential_bounds (power family rho = 2, two-sided)",
+  "grid": {
+    "rows": 20,
+    "verdicts": {
+      "correct": 5,
+      "ref-agree": 2,
+      "ref-disagree": 7,
+      "wrong": 6
+    },
+    "seconds": 24.0
+  },
+  "random": {
+    "rows": 0,
+    "verdicts": {},
+    "seconds": 0.3
+  }
+}

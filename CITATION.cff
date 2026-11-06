@@ -1,0 +1,64 @@
+cff-version: 1.2.0
+message: "If you use certtables, please cite it as below."
+title: certtables
+abstract: >-
+  Interval-certified (Arb ball arithmetic) reference values for statistical quantiles,
+  tail probabilities, exact-test null distributions and group-sequential boundaries, with a
+  digits-correct census of SciPy, statsmodels, mpmath and spotify-confidence against them.
+type: software
+authors:
+  - name: h-a-forster
+repository-code: "https://github.com/h-a-forster/certtables"
+license: MIT
+version: 0.1.0
+date-released: "2026-11-06"
+keywords:
+  - numerical accuracy
+  - interval arithmetic
+  - statistical software
+  - group sequential designs
+  - exact tests
+references:
+  - type: article
+    authors:
+      - family-names: Johansson
+        given-names: Fredrik
+    title: "Arb: efficient arbitrary-precision midpoint-radius interval arithmetic"
+    year: 2017
+    journal: IEEE Transactions on Computers
+    notes: arXiv:1611.02831
+  - type: article
+    authors:
+      - family-names: Wang
+        given-names: Chung-Ching Morgan
+      - family-names: Kennedy
+        given-names: William J.
+    title: "Self-validating computations of probabilities for selected central and noncentral univariate probability functions"
+    year: 1994
+    journal: Journal of the American Statistical Association
+  - type: article
+    authors:
+      - family-names: McCullough
+        given-names: B. D.
+    title: "Assessing the reliability of statistical software: Part I"
+    year: 1998
+    journal: The American Statistician
+  - type: article
+    authors:
+      - family-names: Marsaglia
+        given-names: George
+      - family-names: Tsang
+        given-names: Wai Wan
+      - family-names: Wang
+        given-names: Jingbo
+    title: "Evaluating Kolmogorov's distribution"
+    year: 2003
+    journal: Journal of Statistical Software
+  - type: book
+    authors:
+      - family-names: Jennison
+        given-names: Christopher
+      - family-names: Turnbull
+        given-names: Bruce W.
+    title: "Group Sequential Methods with Applications to Clinical Trials"
+    year: 2000

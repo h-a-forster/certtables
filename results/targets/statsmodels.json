@@ -1,0 +1,19 @@
+{
+  "target": "statsmodels",
+  "version": "0.15.0",
+  "description": "statsmodels.stats.proportion: proportion_confint(method='beta'), binom_test(alternative='smaller'/'larger')",
+  "grid": {
+    "rows": 1114,
+    "verdicts": {
+      "correct": 1114
+    },
+    "seconds": 21.5
+  },
+  "random": {
+    "rows": 2000,
+    "verdicts": {
+      "correct": 2000
+    },
+    "seconds": 1.7
+  }
+}

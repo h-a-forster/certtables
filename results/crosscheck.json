@@ -1,0 +1,14 @@
+{
+  "dps": 80,
+  "seconds_per_point": 10.0,
+  "selected": 1616,
+  "checked": 1616,
+  "counts": {
+    "sample/error:NoConvergence": 1,
+    "sample/pass": 584,
+    "sample/timeout": 15,
+    "wrong/error:NoConvergence": 1,
+    "wrong/pass": 963,
+    "wrong/timeout": 52
+  }
+}

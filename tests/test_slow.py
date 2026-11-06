@@ -1,5 +1,5 @@
 """Slow checks (run with --runslow): rebuild the grid and compare with the committed table
-row for row. Three tests, so each stays under the 15-minute limit for one job."""
+row for row. Three tests, so a job can select one with -k."""
 
 from __future__ import annotations
 

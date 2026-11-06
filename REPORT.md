@@ -9,7 +9,8 @@ tables. Commands are at the end. Method and proofs: [docs/DESIGN.md](docs/DESIGN
 
 - **Reference.** 16,203 rows: 14,726 certified Arb enclosures, 1,414 exact rationals and 63
   uncertified references (K = 4, 5 group-sequential boundaries). The relative width of a
-  certified row is at most 3.6e-15, and nothing scored came out undecided.
+  certified row is at most 3.6e-15 (581 rows are instead the bound `[0, 2^-1100]`), and
+  nothing scored came out undecided.
 - **SciPy 1.18.1 is right where most people use it.** On the deterministic grid of 6,365
   scored points, the normal functions, Clopper-Pearson bounds, binomial tails, Fisher,
   Wilcoxon and Mann-Whitney had no certified-wrong point (1,593 points). 167 points were
@@ -26,7 +27,7 @@ tables. Commands are at the end. Method and proofs: [docs/DESIGN.md](docs/DESIGN
   true value, with `t.cdf` of the result about `8e-200`, and the issue on this region
   (scipy#25968) calls the same kind of value fine. At small df the result sticks near 1e154.
 - **statsmodels 0.15.0**: 0 wrong of 1,114 grid and 2,000 random points. **JAX 0.12.0.1**: 0
-  wrong on the normal, 1.2% (0.6 to 2.1) on chi-square, all marginal. **spotify-confidence
+  wrong on the normal, 1.2% (0.6 to 2.1) on chi-square, all with at least 9.59 digits right. **spotify-confidence
   4.1.0**: boundaries about 1e-5 low after the first look, harmless in practice. **All 36
   printed Jennison and Turnbull constants** checked agree to three decimals.
 
@@ -107,8 +108,8 @@ raised `NoConvergence`.
 | mpmath (15 digits) | F | 964 | 56 | 0.0581 | 0.0441 to 0.0748 |
 
 mpmath scores CDFs and survival functions only (81 more points timed out or raised
-`NoConvergence`), so its rates are not comparable with SciPy's. Each interval's family is
-independent of the others; no adjustment was made.
+`NoConvergence`), so its rates are not comparable with SciPy's. Intervals are per family,
+with no multiplicity adjustment.
 
 ## Root causes
 

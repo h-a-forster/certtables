@@ -10,7 +10,7 @@ A Python package, CLI and study. It computes interval-certified reference values
 arithmetic via python-flint) and exact rationals for statistical CDFs, survival functions,
 quantiles, Clopper-Pearson bounds, exact-test null distributions and group-sequential
 boundaries, publishes them as `data/certtables-v1.csv`, and scores SciPy, statsmodels,
-mpmath (15 digits), spotify-confidence and printed constants against them.
+mpmath (15 digits), spotify-confidence, JAX and printed constants against them.
 
 ## Conventions
 
@@ -30,7 +30,8 @@ mpmath (15 digits), spotify-confidence and printed constants against them.
   fsync per row, skip finished ids, `progress.log`, `errors.jsonl`) and takes
   `--max-minutes`; keep each call under about 12 minutes and rerun to resume. A full build
   takes about 30 CPU minutes (grid and random draws can run side by side). `uv run pytest
-  --runslow` runs three rebuilds, each under 15 minutes.
+  --runslow` runs three rebuilds (the longest took about 19 minutes with all three side by
+  side); select one with `-k` to keep a job short.
 - Changing the grid changes its hash: publish a new table version rather than editing v1.
 - No model or network calls in the package. CPU only.
 - Scratch files go in `tmp/` (gitignored). Do not create `.bak` copies; use git.

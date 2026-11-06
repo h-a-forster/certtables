@@ -15,7 +15,6 @@ import warnings
 from collections import Counter
 from pathlib import Path
 
-import numpy as np
 import scipy
 import scipy.special as sc
 from scipy import stats
@@ -130,9 +129,8 @@ def main() -> None:
         if rec["verdict"] == "wrong" and not pid.startswith(("f.isf", "t.ppf", "t.isf")):
             other[pid.split("(")[0] + "/" + rec["status"]] += 1
     out["other_wrong"] = dict(sorted(other.items()))
-    with np.errstate(all="ignore"):
-        path = ROOT / "results" / "upstream-checks.json"
-        path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
+    path = ROOT / "results" / "upstream-checks.json"
+    path.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(out, indent=2))
 
 

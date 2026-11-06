@@ -40,7 +40,7 @@ ROOT_REL_WIDTH = 1e-20
 X_MAX = Fraction(2) ** 1100
 #: Positive quantiles below this (under the binary64 range) are not enclosed, and function
 #: values certainly below it are stored as the enclosure [0, TINY]: every double rounds such
-#: a value to 0 and the exact digits would cost megabit rationals (DESIGN 3.3).
+#: a value to 0 and the exact digits would cost megabit rationals (DESIGN 2.2).
 TINY = Fraction(1, 2**1100)
 
 

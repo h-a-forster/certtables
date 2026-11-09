@@ -12,3 +12,4 @@ htmlcov/
 tmp/
 # Build checkpoints and logs (the merged tables are committed under data/)
 runs/
+backlog.md

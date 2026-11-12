@@ -53,8 +53,18 @@ SciPy's 0 is right for the 1/10 a caller means.
   rows, 22 against references).
 
 These are rates under a stated log-uniform measure that reaches far into the tails, not
-rates in "typical use". Drafts for maintainers are in [docs/upstream/](docs/upstream/);
-nothing has been filed.
+rates in "typical use". Drafts for maintainers are in [docs/upstream/](docs/upstream/).
+
+**Four more libraries (2026-11-09).** The same table, scored against PyTorch 2.15.0,
+JAX 0.12.0.1 (double and default float32), TensorFlow Probability 0.25.0 and Distributions.jl
+0.25.134, found a defect in each: single-precision pi inside PyTorch's double `gammainc`,
+`1 - cdf` survival functions in TFP, a missing power in Distributions.jl's `KSDist` (fixed
+upstream the same day), and accuracy loss in JAX's `gammainc` at large `a`, severe in its
+default float32.
+Scripts, locked environments and results are in
+[studies/libs-2026-11-09/](studies/libs-2026-11-09/); REPORT.md has the tables.
+
+Upstream reports and their outcomes: [docs/upstream.md](docs/upstream.md).
 
 ## What is certified and what is only referenced
 
@@ -118,7 +128,8 @@ Run these from the repository root: the tables live in the repository, not in th
 
 - [REPORT.md](REPORT.md): the census, root causes and limits.
 - [docs/DESIGN.md](docs/DESIGN.md): why the enclosures are proofs, scoring, scope, prior work.
-- [docs/upstream/](docs/upstream/): drafts for maintainers, not filed.
+- [docs/upstream.md](docs/upstream.md): reports filed upstream and their outcomes;
+  [docs/upstream/](docs/upstream/) holds the drafts.
 - [results/census.md](results/census.md): every target x family.
 - [docs/release-notes-0.1.0.md](docs/release-notes-0.1.0.md).
 

@@ -1,6 +1,7 @@
 # Upstream drafts
 
-Drafts only. Nothing here has been filed; file one only with the owner's go-ahead. Each
+Drafts for maintainers; file one only with the owner's go-ahead. What was filed and what
+became of it is in [../upstream.md](../upstream.md). Each
 draft was checked against the project's tracker on 2026-11-06 (GitHub search and the issues
 named in it). Counts come from `results/upstream-checks.json`, `results/wrong.csv` and the
 files in `results/targets/`.
@@ -10,7 +11,7 @@ it evaluates the target and prints the enclosure, the verdict and the LRE bounds
 
 | Draft | Target | Points | State upstream |
 |---|---|---|---|
-| [scipy-f-isf.md](scipy-f-isf.md) | `scipy.stats.f.isf` | 551 | no dedicated issue; `f` is listed without `_isf` in the tracking issue scipy#17832 |
+| [scipy-f-isf.md](scipy-f-isf.md) | `scipy.stats.f.isf` | 551 | filed as scipy#26692 on 2026-11-12 |
 | [scipy-t-quantile.md](scipy-t-quantile.md) | `stats.t.ppf`, `stats.t.isf` | 91 | one of three failure modes known (scipy#25968); the other two are new |
 | [scipy-f-ppf.md](scipy-f-ppf.md) | `stats.f.ppf` | 22 | same Boost inverse as scipy#26531; not reported for `f.ppf` |
 | [spotify-confidence-bounds.md](spotify-confidence-bounds.md) | `sequential_bounds` | 13 | no issue found |

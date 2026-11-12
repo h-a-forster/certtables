@@ -35,8 +35,8 @@ mpmath (15 digits), spotify-confidence, JAX and printed constants against them.
 - Changing the grid changes its hash: publish a new table version rather than editing v1.
 - No model or network calls in the package. CPU only.
 - Scratch files go in `tmp/` (gitignored). Do not create `.bak` copies; use git.
-- The repository is private; CI runs only on pull requests and manual dispatch (metered
-  minutes). Commits and PRs carry no AI attribution trailers.
+- The repository is public; CI runs on pushes to main, pull requests and manual dispatch.
+  Commits and PRs carry no AI attribution trailers.
 - Release hygiene: no personal names, local user paths or machine details in committed
   files. Upstream drafts in `docs/upstream/` are drafts only; never file them without the
   owner's go-ahead.
@@ -63,7 +63,8 @@ mpmath (15 digits), spotify-confidence, JAX and printed constants against them.
 | `scripts/crosscheck_mpmath.py` | independent check of rows with mpmath at 80 digits |
 | `data/` | the published tables and `MANIFEST.json` |
 | `results/` | per-target scores and census (committed) |
-| `docs/upstream/` | repro drafts for certified-wrong points (not filed) |
+| `docs/upstream/` | repro drafts for certified-wrong points; `docs/upstream.md` lists what was filed and its outcome |
+| `studies/libs-2026-11-09/` | PyTorch, JAX, TFP, Distributions.jl census: scripts as they ran, locks, `census.md`, `claims.csv` |
 
 ## How to test
 
@@ -79,7 +80,7 @@ uv run certtables report
 ## Status and next steps
 
 Updated: 2026-11-06. Version 0.1.0: tables built, six targets scored, `REPORT.md` written,
-upstream drafts in `docs/upstream/` (not filed). Open work is in `backlog.md`.
+upstream drafts in `docs/upstream/`, filed reports in `docs/upstream.md`. Open work is in `backlog.md`.
 
 Rerun `check`, `report` and `scripts/upstream_checks.py` when SciPy ships a newer Boost: the
 `t` and `f.ppf` findings should change. The lock pins SciPy 1.18.1 and JAX 0.12.0.1.

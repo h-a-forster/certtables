@@ -31,6 +31,8 @@ tables. Commands are at the end. Method and proofs: [docs/DESIGN.md](docs/DESIGN
   4.1.0**: boundaries about 1e-5 low after the first look, harmless in practice. **All 16
   printed Jennison and Turnbull constants** checked (K = 2 to 5) agree to three decimals at
   the 36 looks compared.
+- **Four more libraries** (2026-11-09; PyTorch, JAX, TFP, Distributions.jl): a defect in
+  each, one fixed upstream within hours. Section "Four more libraries".
 
 ## What was measured
 
@@ -115,11 +117,12 @@ with no multiplicity adjustment.
 ## Root causes
 
 All 670 SciPy points wrong over the grid and the draws fall into these groups. Drafts with
-reproductions are in [docs/upstream/](docs/upstream/); none has been filed.
+reproductions are in [docs/upstream/](docs/upstream/); what was filed and its outcome is in
+[docs/upstream.md](docs/upstream.md).
 
 | Cause | Points | Share of 670 | Status upstream |
 |---|---|---|---|
-| `f.isf` is `ppf(1 - q)` | 551 | 82% | no dedicated issue |
+| `f.isf` is `ppf(1 - q)` | 551 | 82% | filed as scipy#26692 (2026-11-12) |
 | `t` quantile: stuck near `sqrt(df / DBL_MIN)` | 47 | 7% | unreported |
 | `t` quantile: infinite with the wrong sign | 29 | 4% | scipy#25968; Boost fix after 1.18.1 |
 | `t` quantile: finite, off by a factor of 1.6 to 2.8 | 15 | 2% | unreported |
@@ -143,6 +146,43 @@ Other targets: JAX's 23 chi-square points have LRE from 9.59, at large df; spoti
 13 later-look boundaries are low by 6e-6 to 2.8e-5 relative, consistent with its fixed-step
 trapezoid rule; mpmath's losses at 15 digits are mostly at large df (LRE from 6.93), and 15
 digits is a working precision there, not a promise.
+
+## Four more libraries (2026-11-09)
+
+Table v1 scored against four more libraries, with certtables' own `verdict` and LRE code.
+Double-precision inputs are the exact doubles the table certifies; single-precision runs are
+scored against fresh Arb enclosures at the exact binary32 input, with the same number of ulps
+(relative 5.4e-4, `FLT_MIN` floor). Every count below is in
+[studies/libs-2026-11-09/data/census.md](studies/libs-2026-11-09/data/census.md), and every
+wrong value, with its input and 25-digit enclosure, in `data/claims.csv` beside it.
+
+| Library | Version | Double: grid wrong | Double: random wrong | Main defect |
+|---|---|---|---|---|
+| PyTorch | 2.15.0+cpu | 48 / 710 | 589 / 2,903 | single-precision pi in the double `gammainc` asymptotic series (51 points, up to 1.15e7 ulp); `Normal.icdf` is `erfinv(2p - 1)` (477, `-inf` below p = 1e-16); `Normal.cdf` is `(1 + erf)/2` (106, known) |
+| JAX | 0.12.0.1 | 11 / 710 | 12 / 2,979 | `gammainc` at large `a`: at least 9.59 digits in double, but `chi2.sf(1e6, 1e6)` = 0.4335 in the default float32 (true 0.4998) |
+| TFP | 0.25.0, TF 2.21.0 | 166 / 3,370 | 84 / 5,329 | `survival_function` falls back to `1 - cdf` for Chi2, Gamma and Binomial (175 points; Beta too, outside table v1); far-tail `StudentT.quantile` (43) |
+| Distributions.jl | 0.25.134 | 501 / 5,932 | 629 / 9,552 | `KSDist` cdf misses a power in `cdf_durbin` (up to 33% off in the body); t and F quantiles and tails through `beta_inc` and `beta_inc_inv` (StatsFuns, SpecialFunctions); one input hangs |
+
+Single precision (grid, random): PyTorch 9 / 702 and 104 / 2,069, JAX 5 / 702 and 4 / 2,101,
+TFP 79 / 2,399 and 43 / 3,142. Normal CDFs and quantiles are clean in JAX, TFP and
+Distributions.jl, as are Distributions.jl's Clopper-Pearson, binomial and one-sided Fisher.
+Random rates are per family under the same log-uniform measure as above, so they are not rates
+in everyday use.
+
+- **PyTorch, proved.** A plain-Python replica of `_igam_helper_asymptotic_series` with the
+  header's table matches torch to 4e-15 on all 53 points of that branch; with
+  single-precision pi 51 are wrong, with double pi none.
+- **Distributions.jl, proved.** On 254 exact-rational KS points on the Durbin branch, 74 of the
+  135 with h > 1/2 are wrong as shipped and none with `(2h-1)^m`; an independent
+  2,000,000-sample simulation agrees.
+- **Outside table v1.** Beta CDF, SF and quantiles (1,419 fresh enclosures): JAX 90 / 532
+  random wrong, TFP 246 / 760, Distributions.jl 13 / 1,026.
+- **Limits.** One Windows x86-64 machine, CPU builds, scalar calls. F, t and beta are missing
+  from some libraries (for example no chi-square quantile in JAX 0.12.0.1, no `cdf` for
+  PyTorch's `StudentT`), so coverage differs by library. The t and F root-cause tests use
+  local copies of the formulas, not patched packages.
+
+Four reports were filed on 2026-11-09; outcomes are in [docs/upstream.md](docs/upstream.md).
 
 ## Is the reference right?
 

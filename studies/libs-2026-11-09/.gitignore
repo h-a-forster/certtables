@@ -1,0 +1,8 @@
+# Rebuilt intermediates (README.md, Rebuilding); only the two summaries are committed
+data/*
+!data/census.md
+!data/claims.csv
+logs/
+*/.venv/
+distributionsjl/jl/
+distributionsjl/depot/

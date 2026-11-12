@@ -1,0 +1,20 @@
+import torch
+from torch.distributions import Chi2, Normal
+print(torch.__version__)
+d = lambda v: torch.tensor(v, dtype=torch.float64)
+print("Chi2(50).cdf(50)      ", repr(Chi2(d(50.0)).cdf(d(50.0)).item()))
+print("gammainc(25,25)       ", repr(torch.special.gammainc(d(25.0), d(25.0)).item()))
+print("gammaincc(25,25)      ", repr(torch.special.gammaincc(d(25.0), d(25.0)).item()))
+print("gammainc(150,150)     ", repr(torch.special.gammainc(d(150.0), d(150.0)).item()))
+print("gammainc batch 3      ", torch.special.gammainc(d([25.0, 50.0, 150.0]), d([25.0, 50.0, 150.0])).tolist())
+N = Normal(d(0.0), d(1.0))
+print("Normal.cdf(-10)       ", repr(N.cdf(d(-10.0)).item()))
+print("ndtr(-10)             ", repr(torch.special.ndtr(d(-10.0)).item()))
+print("Normal.icdf(1e-20)    ", repr(N.icdf(d(1e-20)).item()))
+print("ndtri(1e-20)          ", repr(torch.special.ndtri(d(1e-20)).item()))
+print("Normal.icdf(1e-15)    ", repr(N.icdf(d(1e-15)).item()))
+print("Normal.icdf(1e-10)    ", repr(N.icdf(d(1e-10)).item()))
+f = torch.tensor(-7.609029769897461, dtype=torch.float32)
+print("f32 Normal.cdf        ", repr(Normal(torch.tensor(0.0), torch.tensor(1.0)).cdf(f).item()))
+# batch against scalar over the wrong region, in case the vector kernel differs
+xs = d([-5.0, -6.0, -8.0, -10.0]); print("batch ndtr", torch.special.ndtr(xs).tolist(), "scalar", [torch.special.ndtr(x).item() for x in xs])

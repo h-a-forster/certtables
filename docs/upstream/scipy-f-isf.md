@@ -1,6 +1,6 @@
 # BUG: stats.f.isf loses the upper tail: inf below q = 1.1e-16, digits lost well above it
 
-Draft, not filed. SciPy 1.18.1 (current release on 2026-11-06), Windows x86-64.
+Filed as [scipy#26692](https://github.com/scipy/scipy/issues/26692) on 2026-11-12. SciPy 1.18.1 (current release on 2026-11-06), Windows x86-64.
 
 ## Reproducing code
 

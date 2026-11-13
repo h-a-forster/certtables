@@ -256,8 +256,8 @@ certified beta quantiles, rounded outward to 4 decimals), `results/wrong.csv` an
 Every wrong point can be reproduced on its own with `certtables repro '<id>' --target <name>`,
 which prints the target's value, the enclosure, the verdict and the LRE bounds. Root causes
 are grouped in `docs/upstream/`, one draft per cause, with numbers from
-`scripts/upstream_checks.py`, checked against the project's tracker before drafting. Drafts are
-not filed.
+`scripts/upstream_checks.py`, checked against the project's tracker before drafting. A draft is filed only with the
+owner's go-ahead; [upstream.md](upstream.md) lists what was filed and its outcome.
 
 `scripts/crosscheck_mpmath.py` tests the rows behind those verdicts, and a seeded sample of
 the others, against mpmath at 80 digits. That is evidence, not a proof, and only about how Arb

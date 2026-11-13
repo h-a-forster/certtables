@@ -61,3 +61,9 @@ jobs:
 
       - name: Table integrity
         run: uv run certtables verify
+
+      - name: Census and published tables rebuild from the committed results
+        shell: bash
+        run: |
+          uv run certtables report
+          git diff --exit-code -- results/

@@ -152,10 +152,13 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 
 def cmd_report(args: argparse.Namespace) -> int:
+    from certtables import published
     from certtables.report import write_report
 
     paths = write_report(RESULTS / "targets", RESULTS, MANIFEST)
-    for p in paths:
+    tables = RESULTS / "published.md"
+    tables.write_text(published.render(Path()), encoding="utf-8", newline="\n")
+    for p in [*paths, tables]:
         print(p)
     return 0
 

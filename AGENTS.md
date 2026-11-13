@@ -40,6 +40,9 @@ mpmath (15 digits), spotify-confidence, JAX and printed constants against them.
 - Release hygiene: no personal names, local user paths or machine details in committed
   files. Upstream drafts in `docs/upstream/` are drafts only; never file them without the
   owner's go-ahead.
+- README and REPORT tables and summary figures are copies of `results/published.md`
+  (`certtables report` writes it); change `published.py`, rerun, and copy, never type a number.
+  `tests/test_published.py` and CI hold the documents to it.
 - Honesty: "certified" only for Arb/exact rows; K = 4, 5 boundaries and mpmath values are
   references. A target is "certified wrong" only against its declared tolerance; say which.
 
@@ -57,6 +60,7 @@ mpmath (15 digits), spotify-confidence, JAX and printed constants against them.
 | `src/certtables/lre.py` | strdcheck's LRE module, vendored verbatim |
 | `src/certtables/study.py` | LRE bounds, verdicts, `check_target` |
 | `src/certtables/report.py` | census tables (`results/census*.csv`, `census.md`, `wrong.csv`) |
+| `src/certtables/published.py` | `results/published.md`: every README/REPORT results table and the figures their prose quotes |
 | `src/certtables/cli.py` | `build / check / report / verify / repro / env` |
 | `scripts/record_adapters.py` | regenerate `tests/data/recorded.json` |
 | `scripts/upstream_checks.py` | root-cause counts behind `docs/upstream/` |
